@@ -1,0 +1,13 @@
+{
+  "name": "react-attempt",
+  "version": "1.0.0",
+  "description": "Try to get react",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "alexei",
+  "devDependencies": {
+    "express": "^4.16.2"
+  }
+}
