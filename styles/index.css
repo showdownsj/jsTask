@@ -1,24 +1,8 @@
-.age{
-    width : 20px;
-    color: red;
-}
-.name{
-    width: 135px;
-}
-.gender{
-    width: 80px;
-    
-}
-.phone{
-    width:125px;
-    size: 17;
-    
-}
-.company{
-    width: 90px;
-}
 
-.notEditable input{
-    color: blue;
-    
+
+.table{
+    width:100%;
+}
+td{
+   overflow:hiddden;
 }

@@ -32,16 +32,17 @@
 
         var emptyData = [];
         var emptyStates = [];
+        
         for (var i = 0; i < data.length; i++)
             if (data[i]['' + field] == '') {
-                //console.log(data[i]);
+                
                 emptyData.push(data[i]);
                 data.splice(i, 1);
-                emptyStates.push(emptyStates[i]);
+                emptyStates.push(states[i]);
                 states.splice(i, 1);
                 i--;
             }
-        //console.log(data);
+       
         if (field != '') {
             for (var i = 0; i < data.length; i++) {
 
@@ -75,6 +76,7 @@
 
             var resultData;
             var resultStates;
+            console.log(resultStates);
             if (ascDescState == 1) {
                 resultData = data.concat(emptyData);
                 resultStates = states.concat(emptyStates);
@@ -98,7 +100,8 @@
     var App = React.createClass({
 
         getInitialState: function () {
-            return { stateNow: 0 }
+            return { stateNow: 0,
+                     dataFromFile:[] }
         },
         readFile: function (e) {
             e.preventDefault();
@@ -110,9 +113,10 @@
             reader.onload = function (e) {
                 var jsonSTR = e.target.result.trim();
 
-                dataFromFile = JSON.parse(jsonSTR);
+                var dataFromFile = JSON.parse(jsonSTR);
                 //console.log(dataFromFile);
-                self.setState({ stateNow: ++self.stateNow });
+                self.setState({ stateNow: ++self.state.stateNow,
+                                dataFromFile:dataFromFile });
 
             };
             reader.readAsText(file);
@@ -122,7 +126,7 @@
             return (
                 <div className="app">
                     <input type="file" onChange={this.readFile} ></input>
-                    <TableList data={dataFromFile} />
+                    <TableList data={this.state.dataFromFile}  flag = {this.state.stateNow}/>
                 </div>
 
             );
@@ -145,7 +149,8 @@
                 disabled: [],
                 dataTable: null,
                 dataTableToSubmit: null,
-                sortState: null
+                sortState: null,
+                startFlag: 0
             }
         },
         onChangeHandler: function (e) {
@@ -179,7 +184,7 @@
         addNewLine: function (e) {
             e.preventDefault();
             //console.log(this.props.data);
-            var dataTable = this.state.dataTable;
+            var dataTable = this.state.dataTable||[];
             var disabled = createStates(dataTable, this.state.disabled);
 
             dataTable.push({
@@ -210,7 +215,9 @@
             for (var numElem in dataTable)
                 if (dataTable[numElem].id == entryID)
                     disabled[numElem] = disabled[numElem] ? false : true;
+            
             this.setState({ disabled: disabled });
+            
         },
         onClickDelete: function (e) {
             e.preventDefault();
@@ -254,7 +261,8 @@
             for (var index in sortState)
                 if (index != targetIndex)
                     sortState[target] = 0;
-
+            
+            //console.log(this.state.disabled + 'here');
             //console.log(sortState[targetIndex]);
             var sorted = sortDataInc(target.className, this.state.dataTable, this.state.disabled, sortState[targetIndex]);
 
@@ -268,14 +276,24 @@
         render: function () {
             //console.log(this.props.data);
             var dataToTable = this.state.dataTable || this.props.data;
-
+            
+            //console.log(this.props.flag);
             //.. there's some crutch to change an initial state
             if (this.state.dataTable == null && this.props.data.length > 0) {
                 //console.log(this.props.data);
                 this.state.dataTable = this.props.data;
                 dataToTable = this.state.dataTable;
+               
             }
-
+            else if(this.state.dataTable != null && this.props.flag>this.state.startFlag){
+                this.state.dataTable = this.props.data;
+                dataToTable = this.state.dataTable;
+                //console.log(this.props.flag+" "+this.state.startFlag);
+                this.state.startFlag= this.props.flag;
+                this.state.disabled = [];
+               
+            }
+            //console.log(this.state.disabled);
             var dataTemp;
             self = this;
             if (dataToTable.length > 0) {
@@ -306,7 +324,7 @@
 
             return (
                 <div className="tableList">
-                    <table className="table table-hover">
+                    <table className="table">
                         <thead onClick={this.onClickHeader}>
                             <tr>
                                 <th className="name" >Name </th>
