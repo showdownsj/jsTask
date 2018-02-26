@@ -276,7 +276,7 @@
         render: function () {
             //console.log(this.props.data);
             var dataToTable = this.state.dataTable || this.props.data;
-            
+            var isSubmit = false;
             //console.log(this.props.flag);
             //.. there's some crutch to change an initial state
             if (this.state.dataTable == null && this.props.data.length > 0) {
@@ -290,9 +290,14 @@
                 dataToTable = this.state.dataTable;
                 //console.log(this.props.flag+" "+this.state.startFlag);
                 this.state.startFlag= this.props.flag;
-                this.state.disabled = [];
+                this.state.disabled = createStates(dataToTable, this.state.disabled);
                
             }
+
+            if (dataToTable.length>0)
+                isSubmit = true;
+            
+
             //console.log(this.state.disabled);
             var dataTemp;
             self = this;
@@ -301,7 +306,7 @@
                 dataTemp = dataToTable.map(function (item, index) {
 
                     return (
-                        <tr key={item.id} onChange={self.onChangeHandler}>
+                        <tr key={item.id} onChange={self.onChangeHandler} className={!self.state.disabled[index]?"trDisabled":""}> 
                             <td><input type='text' value={item.name} className="name" disabled={!self.state.disabled[index]}> </input></td>
                             <td><input type='text' value={item.age} className="age" disabled={!self.state.disabled[index]}></input></td>
                             <td><select className='gender' value={item.gender} disabled={!self.state.disabled[index]}>
@@ -312,8 +317,8 @@
                             <td><input regexp={regExpMail} type='text' value={item.email} className="email" disabled={!self.state.disabled[index]}></input></td>
                             <td><input type='text' value={item.company} className="company" disabled={!self.state.disabled[index]}></input></td>
                             <td><input type='text' value={item.phone} className="phone" disabled={!self.state.disabled[index]}></input></td>
-                            <td><input type='text' value={item.address} className="address" disabled={!self.state.disabled[index]}></input></td>
-                            <td><button className='editButt' onClick={self.onCLickEdit}>{self.state.disabled[index] ? "End edit" : "Edit"}</button>
+                            <td><input type='text' value={item.address} className="address" disabled={!self.state.disabled[index]} ></input></td>
+                            <td className='action'><button className={!self.state.disabled[index]?'addButt':'editButt'} onClick={self.onCLickEdit}>Edit</button>
                                 <button className='deleteButt' onClick={self.onClickDelete}>Delete</button>
                             </td>
                         </tr>
@@ -341,8 +346,8 @@
                         <tbody className="notEditable">
                             {dataTemp}
 
-                            <tr>
-                                <td><input type='submit' id='submitButt' disabled value='Submit'></input></td>
+                            <tr className ="noBorder">
+                                <td ><input type='submit' id='submitButt' disabled={!isSubmit} value='Submit'></input></td>
                                 <td />
                                 <td />
                                 <td />

@@ -1,8 +1,69 @@
-
-
 .table{
     width:100%;
+    
+}
+.noBorder td{
+    border: none; 
+}
+#submitButt:disabled{
+    background:lightskyblue;
+    color: black;
+    border:1px solid darkblue;
+    padding:2px;
+    width: 50%;
+}
+
+#submitButt, .addButt{
+    background:blue;
+    color:#cccccc;
+    border-radius: 8px;
+    border:1px solid darkblue;
+    width: 50%;
+    height: 50%;
+}
+.deleteButt{
+    background:red;
+    color: #cccccc;
+    border-radius: 8px;
+    width: 50%;
+}
+th{
+    background: lightblue;
+    border: 1px solid lightslategray;
+    padding: 5px;
+}
+.age{
+    width: 35px;
+    text-align: center;
 }
 td{
-   overflow:hiddden;
+    padding:5px;
+    border: 1px solid lightslategray;
+}
+.trDisabled{
+    background: lightgrey;
+}
+input{
+    width:100%;
+    border:none;
+    height: 100%;
+}
+input:disabled{
+    background: none;
+}
+select{
+    width: 100%;
+    border:none;
+}
+select:disabled{
+    background: none;
+}
+.editButt{
+    background:rgb(27, 116, 27);
+    color: white;
+    border-radius: 8px;
+    width: 50%;
+}
+.action{
+    background:white;
 }
