@@ -76,12 +76,12 @@
 
             var resultData;
             var resultStates;
-            console.log(resultStates);
+            //console.log(resultStates);
             if (ascDescState == 1) {
                 resultData = data.concat(emptyData);
                 resultStates = states.concat(emptyStates);
             }
-            else {
+            else if(ascDescState == 2)  {
                 resultData = data.reverse().concat(emptyData);
                 resultStates = states.reverse().concat(emptyStates)
             }
@@ -125,7 +125,7 @@
 
             return (
                 <div className="app">
-                    <input type="file" onChange={this.readFile} ></input>
+                    <input type="file" onChange={this.readFile} className='browseButt'></input>
                     <TableList data={this.state.dataFromFile}  flag = {this.state.stateNow}/>
                 </div>
 
@@ -149,7 +149,7 @@
                 disabled: [],
                 dataTable: null,
                 dataTableToSubmit: null,
-                sortState: null,
+                sortState: [],
                 startFlag: 0
             }
         },
@@ -243,25 +243,26 @@
             var target = e.target;
             var headers = document.getElementsByTagName('th');
             headers = [].slice.call(headers);
-            var targetIndex = headers.indexOf(target);
-
+            var targetIndex = headers.indexOf(target) || headers.indexOf(target.parentNode) ;
+          
             var sortState = this.state.sortState;
-            if (sortState == null) {
+            if (sortState.length==0) {
                 sortState = Array(headers.length - 1);
-                for (var index in sortState) {
+                for (var index=0;index<sortState.length; index++) {
                     sortState[index] = 0;
                 }
             }
 
             if (targetIndex > -1)
-                if (sortState[targetIndex] == 0)
+                if (sortState[targetIndex]== 0 || sortState[targetIndex]==2 )
                     sortState[targetIndex] = 1;
-                else sortState[targetIndex] = 0;
+                else if (sortState[targetIndex] ==1) 
+                    sortState[targetIndex] = 2;
 
-            for (var index in sortState)
+            for (var index=0;index<sortState.length; index++)
                 if (index != targetIndex)
-                    sortState[target] = 0;
-            
+                    sortState[index] = 0;
+            console.log(sortState);
             //console.log(this.state.disabled + 'here');
             //console.log(sortState[targetIndex]);
             var sorted = sortDataInc(target.className, this.state.dataTable, this.state.disabled, sortState[targetIndex]);
@@ -290,14 +291,14 @@
                 dataToTable = this.state.dataTable;
                 //console.log(this.props.flag+" "+this.state.startFlag);
                 this.state.startFlag= this.props.flag;
-                this.state.disabled = createStates(dataToTable, this.state.disabled);
+                this.state.disabled = [];//createStates(dataToTable, this.state.disabled);
                
             }
 
             if (dataToTable.length>0)
                 isSubmit = true;
             
-
+            //console.log(this.state.sortState);
             //console.log(this.state.disabled);
             var dataTemp;
             self = this;
@@ -307,6 +308,7 @@
 
                     return (
                         <tr key={item.id} onChange={self.onChangeHandler} className={!self.state.disabled[index]?"trDisabled":""}> 
+                            <td className='number'>{index+1}</td>
                             <td><input type='text' value={item.name} className="name" disabled={!self.state.disabled[index]}> </input></td>
                             <td><input type='text' value={item.age} className="age" disabled={!self.state.disabled[index]}></input></td>
                             <td><select className='gender' value={item.gender} disabled={!self.state.disabled[index]}>
@@ -318,7 +320,7 @@
                             <td><input type='text' value={item.company} className="company" disabled={!self.state.disabled[index]}></input></td>
                             <td><input type='text' value={item.phone} className="phone" disabled={!self.state.disabled[index]}></input></td>
                             <td><input type='text' value={item.address} className="address" disabled={!self.state.disabled[index]} ></input></td>
-                            <td className='action'><button className={!self.state.disabled[index]?'addButt':'editButt'} onClick={self.onCLickEdit}>Edit</button>
+                            <td className='action'><button className={!self.state.disabled[index]?'editButtIn':'editButtAc'} onClick={self.onCLickEdit}>Edit</button>
                                 <button className='deleteButt' onClick={self.onClickDelete}>Delete</button>
                             </td>
                         </tr>
@@ -326,38 +328,44 @@
                 }
                 )
             };
-
+     
+            
+            //to init states, cause there were [] before
+            this.state.disabled = createStates(dataToTable, this.state.disabled);
             return (
                 <div className="tableList">
                     <table className="table">
                         <thead onClick={this.onClickHeader}>
+                       
                             <tr>
-                                <th className="name" >Name </th>
-                                <th className="age">Age</th>
-                                <th className='gender' >Gender</th>
-                                <th className="email">Email</th>
-                                <th className="company">Company</th>
-                                <th className="phone"> Phone number</th>
-                                <th className="address" >Address</th>
-                                <th>Action</th>
+                                <th className='number'>Num</th>
+                                <th className="name" >Name<a className={this.state.sortState[1]==1?"arrow-top":''}/><a className={this.state.sortState[1]==2?"arrow-bottom":''}/></th>
+                                <th className="age">Age<a className={this.state.sortState[2]==1?"arrow-top":''}/><a className={this.state.sortState[2]==2?"arrow-bottom":''}/></th>
+                                <th className='gender' >Gender<a className={this.state.sortState[3]==1?"arrow-top":''}/><a className={this.state.sortState[3]==2?"arrow-bottom":''}/></th>
+                                <th className="email">Email<a className={this.state.sortState[4]==1?"arrow-top":''}/><a className={this.state.sortState[4]==2?"arrow-bottom":''}/></th>
+                                <th className="company">Company<a className={this.state.sortState[5]==1?"arrow-top":''}/><a className={this.state.sortState[5]==2?"arrow-bottom":''}/></th>
+                                <th className="phone"> Phone number<a className={this.state.sortState[6]==1?"arrow-top":''}/><a className={this.state.sortState[6]==2?"arrow-bottom":''}/></th>
+                                <th className="address" >Address<a className={this.state.sortState[7]==1?"arrow-top":''}/><a className={this.state.sortState[7]==2?"arrow-bottom":''}/></th>
+                                <th className='actionHead'>Action</th>
                             </tr>
                         </thead>
 
                         <tbody className="notEditable">
                             {dataTemp}
+                        <tr>
+                        <td className='noBorder' colSpan='8'><input type='submit' id='submitButt' disabled={!isSubmit} value='Submit' ></input></td>
+                      
+                        <td className='noBorder'><button className='addButt' onClick={this.addNewLine}>Add</button></td>
+                    </tr> 
 
-                            <tr className ="noBorder">
-                                <td ><input type='submit' id='submitButt' disabled={!isSubmit} value='Submit'></input></td>
-                                <td />
-                                <td />
-                                <td />
-                                <td />
-                                <td />
-                                <td />
-                                <td><button className='addButt' onClick={this.addNewLine}>Add</button></td>
-                            </tr>
                         </tbody>
+                        
+                        
                     </table>
+           
+                 
+                    
+                    
                 </div>
             );
         }

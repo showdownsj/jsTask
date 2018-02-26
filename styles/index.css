@@ -1,41 +1,96 @@
+body{
+    font-family: 'helvetica neue', helvetica, arial, sans-serif;
+}
+div .browseButt{
+    text-align: center;
+    padding:5px;
+    margin: 10px;
+}
 .table{
+    table-layout: fixed;
     width:100%;
-    
-}
-.noBorder td{
-    border: none; 
-}
-#submitButt:disabled{
-    background:lightskyblue;
-    color: black;
-    border:1px solid darkblue;
-    padding:2px;
-    width: 50%;
+    border-collapse: collapse;
 }
 
-#submitButt, .addButt{
-    background:blue;
-    color:#cccccc;
-    border-radius: 8px;
-    border:1px solid darkblue;
-    width: 50%;
-    height: 50%;
+button:active, button:focus, input:active,input:focus {
+    outline: none !important;
+  }
+  button::-moz-focus-inner, input::-moz-focus-inner {
+    border: 0 !important;
+  }
+
+#submitButt:disabled{
+    float:left;
+    background:#5E5E5E;
+    color: #FFFFFF;
+    min-width: 85px;
+    width: 100px;
+    min-height: 70%;
+    padding:3px;
+    margin:5px;
+    margin-left:0;
+    
 }
+
+#submitButt{
+    float:left;
+    background:#2B2BE5;
+    color:whitesmoke;
+    border-radius: 5px;
+    min-width: 85px;
+    width: 100px;
+    min-height: 70%;
+    padding:3px;
+    margin:5px;
+    margin-left:0;
+}
+#submitButt:active{
+    float:left;
+    background:#500096;
+    color:whitesmoke;
+    border-radius: 5px;
+    min-width: 85px;
+    width: 100px;
+    min-height: 70%;
+    padding:3px;
+    margin:5px; 
+    margin-left:0;
+}
+
+ .addButt{
+    
+    background:#2B2BE5;
+    color:whitesmoke;
+    border-radius: 5px;
+    min-width: 85px;
+    max-width: 100px;
+    height: 25px;
+    padding:3px;
+    margin:5px;
+    margin-left: 25%;
+    
+}
+
+
 .deleteButt{
     background:red;
-    color: #cccccc;
-    border-radius: 8px;
+    color:whitesmoke;
+    border-radius: 5px;
     width: 50%;
 }
 th{
-    background: lightblue;
+    background: #00BBF9;
     border: 1px solid lightslategray;
-    padding: 5px;
+    padding: 8px;
+    margin-top:5px;
+    z-index: 1;
 }
 .age{
-    width: 35px;
+    width: 45px;
+    min-width:45px;
     text-align: center;
 }
+
 td{
     padding:5px;
     border: 1px solid lightslategray;
@@ -54,16 +109,74 @@ input:disabled{
 select{
     width: 100%;
     border:none;
+    background: white;
+    outline:none;
 }
 select:disabled{
     background: none;
 }
-.editButt{
+.editButtAc{
     background:rgb(27, 116, 27);
     color: white;
-    border-radius: 8px;
+    border-radius: 5px;
+    width: 50%;
+}
+.editButtIn{
+    background:#0320BA;
+    color: white;
+    border-radius: 5px;
     width: 50%;
 }
 .action{
     background:white;
+    min-width:140px; 
+    width:140px;
 }
+.actionHead{
+    min-width:140px; 
+    width:140px;
+}
+.phone,.company,.name   {
+    min-width:140px;
+    width:140px;
+}
+.gender{
+    min-width:80px;
+    width:80px;
+}
+.number{
+    width: 35px;
+    min-width:35px;
+}
+.address{
+    min-width:150px;
+    width:150px;
+}
+.email{
+    min-width:140px; 
+    width:140px;
+}
+.noBorder{
+    border:none;
+}
+
+.arrow-top{
+   
+    width: 0;
+    height: 0;
+    border: 8px solid transparent; 
+    border-top-color: orangered;  
+    border-bottom: 0 ;
+    float:right;
+    z-index: 0;
+  }
+
+  .arrow-bottom {
+    width: 0;
+    height: 0;
+    border: 8px solid transparent; 
+    border-bottom-color: yellowgreen;  
+    border-top: 0;
+    float:right;
+    z-index: 0;
+    }
