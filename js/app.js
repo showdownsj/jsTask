@@ -1,9 +1,4 @@
 (function () {
-    var dataFromFile = [];
-    var genderArr = ['male', 'female'];
-
-    var regExpMail = new RegExp(/@[A-Za-z0-9]+.[a-z]+/g);
-    var regExpPhone = new RegExp(/[+\d\s]+[(]+[\d]+[)]+[\s\d-]+/g);
 
 
     //get new id key for item
@@ -156,7 +151,9 @@
                 dataTable: null,
                 sortState: [],
                 startFlag: 0,
-                result:[0,'']
+                result: [0, '', ''],
+                errors: [],
+                warnings: []
             }
         },
 
@@ -293,22 +290,45 @@
 
         onSubmitHandler: function (e) {
             e.preventDefault();
-            var self = this;
-           
+
+            var validate = this.validator(this.state.dataTable);
+            //console.log(validate.toSubmit);
             fetch('/users', {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(self.state.dataTable)
-            }) .then(function(response) {
+                body: JSON.stringify(validate.toSubmit)
+            }).then(function (response) {
                 return response.json()
-              }).then(function(body) {
+            }).then(function (body) {
                 console.log(body);
-              });
-                
-             self.setState({result : [1, 'success']});
-              
+            });
 
-            
+            self.setState({
+                result: [1, 'success', 'record had been added'],
+                errors: validate.errors,
+                warnings: validate.warnings
+            });
+
+
+
+        },
+
+        validator: function (data) {
+            var errors = [];
+            var warnings = [];
+            var toSubmit = [];
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].name == '' || data[i].age < 0 || data[i].gender == '')
+                    errors.push(i);
+                else if (data[i].phone == '' || data[i].address == '' || data[i].company == '' || data[i].email == '') {
+                    toSubmit.push(data[i])
+                    warnings.push(i);
+                }
+                else toSubmit.push(data[i]);
+            }
+
+            return { errors: errors, warnings: warnings, toSubmit: toSubmit };
+
         },
 
         render: function () {
@@ -316,9 +336,17 @@
             var dataToTable = this.state.dataTable || this.props.data;
             var isSubmit = false;
             var result = this.state.result;
-            console.log(this.state.result);
-            if(this.state.result[0]!=0)
-                this.state.result = [0,''];
+
+            //console.log(this.state.result);
+
+            if (this.state.result[0] != 0)
+                this.state.result = [0, ''];
+
+            var errors = this.state.errors;
+            var warnings = this.state.warnings;
+
+
+            // this.state.errors = this.state.warnings =[];
 
             //console.log(this.props.flag);
             //.. there's some crutch to change an initial state
@@ -351,7 +379,7 @@
                 dataTemp = dataToTable.map(function (item, index) {
 
                     return (
-                        <tr key={item.id} onChange={self.onChangeHandler} className={!self.state.disabled[index] ? "trDisabled" : ""}>
+                        <tr key={item.id} onChange={self.onChangeHandler} className={!self.state.disabled[index] ? "trDisabled" : ""} className={errors.indexOf(index) > -1 ? "hasErr" : '' || warnings.indexOf(index) > -1 ? "hasWarn" : ''}>
                             <td className='number'>{index + 1}</td>
                             <td><input type='text' value={item.name} className="name" disabled={!self.state.disabled[index]}> </input></td>
                             <td><input type='text' value={item.age} className="age" disabled={!self.state.disabled[index]}></input></td>
@@ -360,7 +388,7 @@
                                 <option value='female' >{"female"}</option>
                             </select></td>
 
-                            <td><input regexp={regExpMail} type='text' value={item.email} className="email" disabled={!self.state.disabled[index]}></input></td>
+                            <td><input type='text' value={item.email} className="email" disabled={!self.state.disabled[index]}></input></td>
                             <td><input type='text' value={item.company} className="company" disabled={!self.state.disabled[index]}></input></td>
                             <td><input type='text' value={item.phone} className="phone" disabled={!self.state.disabled[index]}></input></td>
                             <td><input type='text' value={item.address} className="address" disabled={!self.state.disabled[index]} ></input></td>
@@ -405,7 +433,7 @@
 
                             </tbody>
                         </table>
-                        <div className = 'result' hidden = {!result[0]}>{result[1]}</div>
+                        <div className='result' hidden={!result[0]}>{dataToTable.length - errors.length + '\\' + dataToTable.length + ' ' + result[2]}</div>
                     </form>
                 </div>
             );
