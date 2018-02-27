@@ -3,10 +3,19 @@
 
     //get new id key for item
     function generateID(data) {
+
+        var hasInDB = []
+        fetch('/users', {
+            "method": "GET"
+          })
+            .then((response) => response.json())
+            .then((responseData) => hasInDB =responseData)
+         
+            console
         var ID = Math.random().toString(16).substr(2) + Math.random().toString(16).substr(2, 3);
         ID = '5a6b0087' + ID;
         for (var index in data)
-            if (data[index].id == ID)
+            if (data[index].id == ID || hasInDB.indexOf(ID)>-1)
                 ID = generateID(data);
         return ID;
     }
@@ -121,12 +130,15 @@
             };
             reader.readAsText(file);
         },
+   
 
         render: function () {
 
             return (
                 <div className="app">
-                    <input type="file" onChange={this.readFile} className='browseButt'></input>
+                    <form>
+                    <input type="file" onClick={this.onCLick} onChange={this.readFile} className='browseButt'></input>
+                    </form>
                     <TableList data={this.state.dataFromFile} flag={this.state.stateNow} />
                 </div>
 
@@ -194,7 +206,7 @@
             dataTable.push({
                 id: generateID(dataTable),
                 name: '',
-                age: 0,
+                age: 1,
                 gender: 'male',
                 phone: '',
                 company: '',
@@ -278,7 +290,8 @@
             //console.log(sortState);
             //console.log(this.state.disabled + 'here');
             //console.log(sortState[targetIndex]);
-            var sorted = sortDataInc(className, this.state.dataTable, this.state.disabled, sortState[targetIndex]);
+            var sorted = sortDataInc(className, this.state.dataTable, 
+                                    this.state.disabled, sortState[targetIndex]);
 
             this.setState({
                 dataTable: sorted.TD,
@@ -304,7 +317,7 @@
             });
 
             self.setState({
-                result: [1, 'success', 'record had been added'],
+                result: [1, 'success', 'records has been added and updated'],
                 errors: validate.errors,
                 warnings: validate.warnings
             });
@@ -319,10 +332,10 @@
             var toSubmit = [];
             for (var i = 0; i < data.length; i++) {
                 if (data[i].name == '' || data[i].age < 0 || data[i].gender == '')
-                    errors.push(i);
+                    errors.push(data[i].id);
                 else if (data[i].phone == '' || data[i].address == '' || data[i].company == '' || data[i].email == '') {
                     toSubmit.push(data[i])
-                    warnings.push(i);
+                    warnings.push(data[i].id);
                 }
                 else toSubmit.push(data[i]);
             }
@@ -379,7 +392,7 @@
                 dataTemp = dataToTable.map(function (item, index) {
 
                     return (
-                        <tr key={item.id} onChange={self.onChangeHandler} className={!self.state.disabled[index] ? "trDisabled" : ""} className={errors.indexOf(index) > -1 ? "hasErr" : '' || warnings.indexOf(index) > -1 ? "hasWarn" : ''}>
+                        <tr key={item.id} onChange={self.onChangeHandler} className={!self.state.disabled[index] ? "trDisabled" : ""} className={errors.indexOf(item.id) > -1 ? "hasErr" : '' || warnings.indexOf(item.id) > -1 ? "hasWarn" : ''}>
                             <td className='number'>{index + 1}</td>
                             <td><input type='text' value={item.name} className="name" disabled={!self.state.disabled[index]}> </input></td>
                             <td><input type='text' value={item.age} className="age" disabled={!self.state.disabled[index]}></input></td>
@@ -433,7 +446,14 @@
 
                             </tbody>
                         </table>
-                        <div className='result' hidden={!result[0]}>{dataToTable.length - errors.length + '\\' + dataToTable.length + ' ' + result[2]}</div>
+                        <div className='result' hidden={!result[0]}>{dataToTable.length - errors.length + '\\' + dataToTable.length + ' ' + result[2]}
+                            <br/>
+                            
+                            <span className="warning"><i className='arrowRight'/> warnings: {warnings.length}</span>
+                            <br/>
+                            
+                            <span className="error"><i className='arrowRight'/> errors: {errors.length} </span>
+                        </div>
                     </form>
                 </div>
             );
