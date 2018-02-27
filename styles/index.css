@@ -19,18 +19,7 @@ button:active, button:focus, input:active,input:focus {
     border: 0 !important;
   }
 
-#submitButt:disabled{
-    float:left;
-    background:#5E5E5E;
-    color: #FFFFFF;
-    min-width: 85px;
-    width: 100px;
-    min-height: 70%;
-    padding:3px;
-    margin:5px;
-    margin-left:0;
-    
-}
+
 
 #submitButt{
     float:left;
@@ -57,6 +46,18 @@ button:active, button:focus, input:active,input:focus {
     margin-left:0;
 }
 
+#submitButt:disabled{
+    float:left;
+    background:#5E5E5E;
+    color: #FFFFFF;
+    min-width: 85px;
+    width: 100px;
+    min-height: 70%;
+    padding:3px;
+    margin:5px;
+    margin-left:0;
+    
+}
  .addButt{
     
     background:#2B2BE5;
@@ -84,6 +85,12 @@ th{
     padding: 8px;
     margin-top:5px;
     z-index: 1;
+    
+}
+th span{
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none; 
 }
 .age{
     width: 45px;
@@ -95,17 +102,15 @@ td{
     padding:5px;
     border: 1px solid lightslategray;
 }
+
 .trDisabled{
     background: lightgrey;
 }
 input{
     width:100%;
     border:none;
-    height: 100%;
 }
-input:disabled{
-    background: none;
-}
+
 select{
     width: 100%;
     border:none;
@@ -152,6 +157,7 @@ select:disabled{
     min-width:150px;
     width:150px;
 }
+
 .email{
     min-width:140px; 
     width:140px;
@@ -179,4 +185,25 @@ select:disabled{
     border-top: 0;
     float:right;
     z-index: 0;
+    }
+
+    input[type="text"]{
+        width: 100%;
+        background: none;
+        border: none;
+    }
+
+    .result{
+    
+        background:  rgb(0, 99, 58);;
+        border: 1px solid gray;
+        margin: 20px;
+        margin-left: 25%;
+        margin-right: 25%;
+        padding: 15px;
+        text-align: center;
+        color: white;
+        font: bold 14pt sans-serif;  
+        border-radius: 15px;
+      
     }

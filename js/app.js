@@ -32,17 +32,17 @@
 
         var emptyData = [];
         var emptyStates = [];
-        
+
         for (var i = 0; i < data.length; i++)
             if (data[i]['' + field] == '') {
-                
+
                 emptyData.push(data[i]);
                 data.splice(i, 1);
                 emptyStates.push(states[i]);
                 states.splice(i, 1);
                 i--;
             }
-       
+
         if (field != '') {
             for (var i = 0; i < data.length; i++) {
 
@@ -81,11 +81,11 @@
                 resultData = data.concat(emptyData);
                 resultStates = states.concat(emptyStates);
             }
-            else if(ascDescState == 2)  {
+            else if (ascDescState == 2) {
                 resultData = data.reverse().concat(emptyData);
                 resultStates = states.reverse().concat(emptyStates)
             }
-            
+
             return { TD: resultData, ST: resultStates };
         }
     }
@@ -100,9 +100,12 @@
     var App = React.createClass({
 
         getInitialState: function () {
-            return { stateNow: 0,
-                     dataFromFile:[] }
+            return {
+                stateNow: 0,
+                dataFromFile: []
+            }
         },
+
         readFile: function (e) {
             e.preventDefault();
 
@@ -115,18 +118,21 @@
 
                 var dataFromFile = JSON.parse(jsonSTR);
                 //console.log(dataFromFile);
-                self.setState({ stateNow: ++self.state.stateNow,
-                                dataFromFile:dataFromFile });
+                self.setState({
+                    stateNow: ++self.state.stateNow,
+                    dataFromFile: dataFromFile
+                });
 
             };
             reader.readAsText(file);
         },
+
         render: function () {
 
             return (
                 <div className="app">
                     <input type="file" onChange={this.readFile} className='browseButt'></input>
-                    <TableList data={this.state.dataFromFile}  flag = {this.state.stateNow}/>
+                    <TableList data={this.state.dataFromFile} flag={this.state.stateNow} />
                 </div>
 
             );
@@ -148,11 +154,12 @@
             return {
                 disabled: [],
                 dataTable: null,
-                dataTableToSubmit: null,
                 sortState: [],
-                startFlag: 0
+                startFlag: 0,
+                result:[0,'']
             }
         },
+
         onChangeHandler: function (e) {
             e.preventDefault();
             var targetRowID = e.target.parentNode.parentNode.getAttribute('data-reactid');
@@ -175,23 +182,23 @@
             }
 
             this.setState({
-                dataTable: dataTable,
-                dataTableToSubmit: dataTable
+                dataTable: dataTable
             });
 
 
         },
+
         addNewLine: function (e) {
             e.preventDefault();
             //console.log(this.props.data);
-            var dataTable = this.state.dataTable||[];
+            var dataTable = this.state.dataTable || [];
             var disabled = createStates(dataTable, this.state.disabled);
 
             dataTable.push({
                 id: generateID(dataTable),
                 name: '',
-                age: '',
-                gender: '',
+                age: 0,
+                gender: 'male',
                 phone: '',
                 company: '',
                 email: '',
@@ -205,6 +212,7 @@
             });
             //console.log(dataTable);
         },
+
         onCLickEdit: function (e) {
             e.preventDefault();
             var targetRowID = e.target.parentNode.parentNode.getAttribute('data-reactid');
@@ -215,17 +223,18 @@
             for (var numElem in dataTable)
                 if (dataTable[numElem].id == entryID)
                     disabled[numElem] = disabled[numElem] ? false : true;
-            
+
             this.setState({ disabled: disabled });
-            
+
         },
+
         onClickDelete: function (e) {
             e.preventDefault();
             var targetRowID = e.target.parentNode.parentNode.getAttribute('data-reactid');
             var entryID = targetRowID.slice(targetRowID.indexOf('$') + 1);
             var dataTable = this.state.dataTable;
             var disabled = createStates(dataTable, this.state.disabled);
-            
+
             for (var numElem in dataTable)
                 if (dataTable[numElem].id == entryID) {
                     dataTable.splice(numElem, 1);
@@ -234,38 +243,45 @@
             //console.log(dataTable);
             this.setState({
                 disabled: disabled,
-                dataTable: dataTable,
-                dataTableToSubmit: dataTable
+                dataTable: dataTable
             });
         },
+
         onClickHeader: function (e) {
             e.preventDefault();
             var target = e.target;
             var headers = document.getElementsByTagName('th');
             headers = [].slice.call(headers);
-            var targetIndex = headers.indexOf(target) || headers.indexOf(target.parentNode) ;
-          
+            var targetIndex = headers.indexOf(target) & headers.indexOf(target.parentNode);
+
+            //define the className of header
+            var className;
+            if (headers.indexOf(target) > -1)
+                className = target.className;
+            else if (headers.indexOf(target.parentNode))
+                className = target.parentNode.className;
+
             var sortState = this.state.sortState;
-            if (sortState.length==0) {
+            if (sortState.length == 0) {
                 sortState = Array(headers.length - 1);
-                for (var index=0;index<sortState.length; index++) {
+                for (var index = 0; index < sortState.length; index++) {
                     sortState[index] = 0;
                 }
             }
 
             if (targetIndex > -1)
-                if (sortState[targetIndex]== 0 || sortState[targetIndex]==2 )
+                if (sortState[targetIndex] == 0 || sortState[targetIndex] == 2)
                     sortState[targetIndex] = 1;
-                else if (sortState[targetIndex] ==1) 
+                else if (sortState[targetIndex] == 1)
                     sortState[targetIndex] = 2;
 
-            for (var index=0;index<sortState.length; index++)
+            for (var index = 0; index < sortState.length; index++)
                 if (index != targetIndex)
                     sortState[index] = 0;
-            console.log(sortState);
+            //console.log(sortState);
             //console.log(this.state.disabled + 'here');
             //console.log(sortState[targetIndex]);
-            var sorted = sortDataInc(target.className, this.state.dataTable, this.state.disabled, sortState[targetIndex]);
+            var sorted = sortDataInc(className, this.state.dataTable, this.state.disabled, sortState[targetIndex]);
 
             this.setState({
                 dataTable: sorted.TD,
@@ -274,32 +290,60 @@
             })
 
         },
+
+        onSubmitHandler: function (e) {
+            e.preventDefault();
+            var self = this;
+           
+            fetch('/users', {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(self.state.dataTable)
+            }) .then(function(response) {
+                return response.json()
+              }).then(function(body) {
+                console.log(body);
+              });
+                
+             self.setState({result : [1, 'success']});
+              
+
+            
+        },
+
         render: function () {
             //console.log(this.props.data);
             var dataToTable = this.state.dataTable || this.props.data;
             var isSubmit = false;
+            var result = this.state.result;
+            console.log(this.state.result);
+            if(this.state.result[0]!=0)
+                this.state.result = [0,''];
+
             //console.log(this.props.flag);
             //.. there's some crutch to change an initial state
             if (this.state.dataTable == null && this.props.data.length > 0) {
                 //console.log(this.props.data);
                 this.state.dataTable = this.props.data;
                 dataToTable = this.state.dataTable;
-               
+
             }
-            else if(this.state.dataTable != null && this.props.flag>this.state.startFlag){
+            else if (this.state.dataTable != null && this.props.flag > this.state.startFlag) {
                 this.state.dataTable = this.props.data;
                 dataToTable = this.state.dataTable;
                 //console.log(this.props.flag+" "+this.state.startFlag);
-                this.state.startFlag= this.props.flag;
-                this.state.disabled = [];//createStates(dataToTable, this.state.disabled);
-               
+                this.state.startFlag = this.props.flag;
+                this.state.disabled = createStates(dataToTable, this.state.disabled);
+
             }
 
-            if (dataToTable.length>0)
+            if (dataToTable.length > 0)
                 isSubmit = true;
-            
+
             //console.log(this.state.sortState);
             //console.log(this.state.disabled);
+
+
             var dataTemp;
             self = this;
             if (dataToTable.length > 0) {
@@ -307,8 +351,8 @@
                 dataTemp = dataToTable.map(function (item, index) {
 
                     return (
-                        <tr key={item.id} onChange={self.onChangeHandler} className={!self.state.disabled[index]?"trDisabled":""}> 
-                            <td className='number'>{index+1}</td>
+                        <tr key={item.id} onChange={self.onChangeHandler} className={!self.state.disabled[index] ? "trDisabled" : ""}>
+                            <td className='number'>{index + 1}</td>
                             <td><input type='text' value={item.name} className="name" disabled={!self.state.disabled[index]}> </input></td>
                             <td><input type='text' value={item.age} className="age" disabled={!self.state.disabled[index]}></input></td>
                             <td><select className='gender' value={item.gender} disabled={!self.state.disabled[index]}>
@@ -320,7 +364,7 @@
                             <td><input type='text' value={item.company} className="company" disabled={!self.state.disabled[index]}></input></td>
                             <td><input type='text' value={item.phone} className="phone" disabled={!self.state.disabled[index]}></input></td>
                             <td><input type='text' value={item.address} className="address" disabled={!self.state.disabled[index]} ></input></td>
-                            <td className='action'><button className={!self.state.disabled[index]?'editButtIn':'editButtAc'} onClick={self.onCLickEdit}>Edit</button>
+                            <td className='action'><button className={!self.state.disabled[index] ? 'editButtIn' : 'editButtAc'} onClick={self.onCLickEdit}>Edit</button>
                                 <button className='deleteButt' onClick={self.onClickDelete}>Delete</button>
                             </td>
                         </tr>
@@ -328,44 +372,41 @@
                 }
                 )
             };
-     
-            
+
+
             //to init states, cause there were [] before
             this.state.disabled = createStates(dataToTable, this.state.disabled);
             return (
                 <div className="tableList">
-                    <table className="table">
-                        <thead onClick={this.onClickHeader}>
-                       
-                            <tr>
-                                <th className='number'>Num</th>
-                                <th className="name" >Name<a className={this.state.sortState[1]==1?"arrow-top":''}/><a className={this.state.sortState[1]==2?"arrow-bottom":''}/></th>
-                                <th className="age">Age<a className={this.state.sortState[2]==1?"arrow-top":''}/><a className={this.state.sortState[2]==2?"arrow-bottom":''}/></th>
-                                <th className='gender' >Gender<a className={this.state.sortState[3]==1?"arrow-top":''}/><a className={this.state.sortState[3]==2?"arrow-bottom":''}/></th>
-                                <th className="email">Email<a className={this.state.sortState[4]==1?"arrow-top":''}/><a className={this.state.sortState[4]==2?"arrow-bottom":''}/></th>
-                                <th className="company">Company<a className={this.state.sortState[5]==1?"arrow-top":''}/><a className={this.state.sortState[5]==2?"arrow-bottom":''}/></th>
-                                <th className="phone"> Phone number<a className={this.state.sortState[6]==1?"arrow-top":''}/><a className={this.state.sortState[6]==2?"arrow-bottom":''}/></th>
-                                <th className="address" >Address<a className={this.state.sortState[7]==1?"arrow-top":''}/><a className={this.state.sortState[7]==2?"arrow-bottom":''}/></th>
-                                <th className='actionHead'>Action</th>
-                            </tr>
-                        </thead>
+                    <form onSubmit={this.onSubmitHandler}>
+                        <table className="table">
+                            <thead onClick={this.onClickHeader}>
 
-                        <tbody className="notEditable">
-                            {dataTemp}
-                        <tr>
-                        <td className='noBorder' colSpan='8'><input type='submit' id='submitButt' disabled={!isSubmit} value='Submit' ></input></td>
-                      
-                        <td className='noBorder'><button className='addButt' onClick={this.addNewLine}>Add</button></td>
-                    </tr> 
+                                <tr>
+                                    <th className='number'>Num</th>
+                                    <th className="name" >Name<a className={this.state.sortState[1] == 1 ? "arrow-top" : '' || this.state.sortState[1] == 2 ? "arrow-bottom" : ''} /></th>
+                                    <th className="age">Age<a className={this.state.sortState[2] == 1 ? "arrow-top" : '' || this.state.sortState[2] == 2 ? "arrow-bottom" : ''} /></th>
+                                    <th className='gender' >Gender<a className={this.state.sortState[3] == 1 ? "arrow-top" : '' || this.state.sortState[3] == 2 ? "arrow-bottom" : ''} /></th>
+                                    <th className="email">Email<a className={this.state.sortState[4] == 1 ? "arrow-top" : '' || this.state.sortState[4] == 2 ? "arrow-bottom" : ''} /></th>
+                                    <th className="company">Company<a className={this.state.sortState[5] == 1 ? "arrow-top" : '' || this.state.sortState[5] == 2 ? "arrow-bottom" : ''} /></th>
+                                    <th className="phone"> Phone number<a className={this.state.sortState[6] == 1 ? "arrow-top" : '' || this.state.sortState[6] == 2 ? "arrow-bottom" : ''} /></th>
+                                    <th className="address" >Address<a className={this.state.sortState[7] == 1 ? "arrow-top" : '' || this.state.sortState[7] == 2 ? "arrow-bottom" : ''} /></th>
+                                    <th className='actionHead'>Action</th>
+                                </tr>
+                            </thead>
 
-                        </tbody>
-                        
-                        
-                    </table>
-           
-                 
-                    
-                    
+                            <tbody className="notEditable">
+                                {dataTemp}
+                                <tr>
+                                    <td className='noBorder' colSpan='8'><input type='submit' id='submitButt' disabled={!isSubmit} value='Submit' ></input></td>
+
+                                    <td className='noBorder'><button className='addButt' onClick={this.addNewLine}>Add</button></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div className = 'result' hidden = {!result[0]}>{result[1]}</div>
+                    </form>
                 </div>
             );
         }
