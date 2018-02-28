@@ -136,9 +136,9 @@
 
             return (
                 <div className="app">
-                    <form>
-                    <input type="file" onClick={this.onCLick} onChange={this.readFile} className='browseButt'></input>
-                    </form>
+                    
+                    <input type="file"  onChange={this.readFile} className='browseButt'></input>
+                   
                     <TableList data={this.state.dataFromFile} flag={this.state.stateNow} />
                 </div>
 
@@ -455,7 +455,7 @@
                             <span className="warning"><i className='arrowRight'/> warnings: {warnings.length}</span>
                             <br/>
                             
-                            <span className="error"><i className='arrowRight'/> errors: {errors.length} </span>
+                            <span className="error"><i className='arrowRight'/> errors: {errors.length} (name field mustn't be empty)</span>
                         </div>
                     </form>
                 </div>

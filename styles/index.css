@@ -1,11 +1,12 @@
 body{
     font-family: 'helvetica neue', helvetica, arial, sans-serif;
 }
-div .browseButt{
+.browseButt{
     text-align: center;
     padding:5px;
     margin: 10px;
 }
+
 .table{
     table-layout: fixed;
     width:100%;
@@ -14,12 +15,11 @@ div .browseButt{
 
 button:active, button:focus, input:active,input:focus {
     outline: none !important;
-  }
-  button::-moz-focus-inner, input::-moz-focus-inner {
+}
+
+button::-moz-focus-inner, input::-moz-focus-inner {
     border: 0 !important;
-  }
-
-
+}
 
 #submitButt{
     float:left;
@@ -103,13 +103,12 @@ td{
     border: 1px solid lightslategray;
 }
 
-.trDisabled{
-    background: lightgrey;
-}
+
 input{
     width:100%;
     border:none;
 }
+
 
 select{
     width: 100%;
@@ -140,8 +139,9 @@ select:disabled{
 .hasWarn{
     background:rgb(233, 247, 107); 
 }
+
 .action{
-    background:white;
+    background:rgb(255, 255, 255);
     min-width:140px; 
     width:140px;
 }
@@ -200,7 +200,9 @@ input[type="text"]{
     background: none;
     border: none;
 }
-
+input[type="text"]:disabled, select:disabled{
+    background: rgb(235, 234, 234);
+}
 .result{
     background:  rgb(111, 220, 229);
     border: 1px solid gray;
@@ -239,3 +241,4 @@ input[type="text"]{
  .result .error{
      color:#D50000;
  }
+
