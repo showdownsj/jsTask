@@ -227,7 +227,7 @@
             var targetRowID = e.target.parentNode.parentNode.getAttribute('data-reactid');
             var entryID = targetRowID.slice(targetRowID.indexOf('$') + 1);
             var dataTable = this.state.dataTable;
-            var disabled = createStates(dataTable, this.state.disabled);
+            var disabled = this.state.disabled;
 
             for (var numElem in dataTable)
                 if (dataTable[numElem].id == entryID)
@@ -366,7 +366,10 @@
             if (this.state.dataTable == null && this.props.data.length > 0) {
                 //console.log(this.props.data);
                 this.state.dataTable = this.props.data;
+                
                 dataToTable = this.state.dataTable;
+                this.state.disabled = createStates(dataToTable, []);
+                this.state.startFlag = this.props.flag;
 
             }
             else if (this.state.dataTable != null && this.props.flag > this.state.startFlag) {
@@ -374,7 +377,7 @@
                 dataToTable = this.state.dataTable;
                 //console.log(this.props.flag+" "+this.state.startFlag);
                 this.state.startFlag = this.props.flag;
-                this.state.disabled = createStates(dataToTable, this.state.disabled);
+                this.state.disabled = createStates(dataToTable, []);
 
             }
 
